@@ -6,7 +6,7 @@ else
 	t_mode=$1
 fi
 
-function simpleRND2() {
+function simpleRND2 {
 	rnd_from=1
 	rnd_to=200
 
