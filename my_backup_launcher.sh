@@ -69,7 +69,7 @@ else
 fi
 }
 
-write_log() {
+function write_log() {
 t_str=$1
 
 my_date=$(date '+%d %b %Y %H:%M:%S')
