@@ -7,6 +7,7 @@ script_full_path_share="${script_path_share}/${script_name_share}"
 script_path_local="/root/backup"
 script_name_local="my_backup_v3.sh"
 script_full_path_local="${script_path_local}/${script_name_local}"
+exec_line="${script_full_path_local} cron"
 
 log_path_local="/root/backup"
 log_file_local="${log_path_local}/backup_run.log"
@@ -103,4 +104,4 @@ if [[ $mount_success -eq 1 ]]; then
 fi
 
 write_log "Backup launched"
-"$script_full_path_local cron"
+"$exec_line"
