@@ -8,8 +8,8 @@ script_path_local="/root/backup"
 script_name_local="my_backup_v3.sh"
 script_full_path_local="${script_path_local}/${script_name_local}"
 
-log_path="/root/backup"
-log_file="${log_path}/backup_run.log"
+log_path_local="/root/backup"
+log_file_local="${log_path_local}/backup_run.log"
 
 
 function checkPrivNetAvailable {
@@ -75,10 +75,10 @@ t_str=$1
 my_date=$(date '+%d %b %Y %H:%M:%S')
 t_out_str="${my_date}  ${t_str}"
 
-if [[ ! -f $log_file ]]; then
-	echo $t_out_str > $log_file
+if [[ ! -f $log_file_local ]]; then
+	echo $t_out_str > $log_file_local
 else
-	echo $t_out_str >> $log_file
+	echo $t_out_str >> $log_file_local
 fi
 }
 
