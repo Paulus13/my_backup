@@ -104,4 +104,4 @@ if [[ $mount_success -eq 1 ]]; then
 fi
 
 write_log "Backup launched"
-"$exec_line"
+eval "$exec_line"
