@@ -540,6 +540,7 @@ if [[ $mount_success -eq 1 ]]; then
 fi
 
 mv ~/backup.log ~/backup_${mydate}.log
+fi
 
 configCrontab2
 
@@ -547,4 +548,3 @@ configCrontab2
 #cp /backup/$myfile1 /home/bu/backup/boodet/
 #scp_rc=$?
 #echo $mydate  TAR_RC=$tar_rc  SCP_RC=$scp_rc >> /backup/backup.log
-fi
