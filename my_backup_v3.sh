@@ -25,15 +25,15 @@ function simpleRND2 {
 
 function getVMName {
 t_hostname=$(hostname)
-if [ -f ./vps_name.var ]; then
-	read VM_NAME < ./vps_name.var
+if [ -f /root/backup/vps_name.var ]; then
+	read VM_NAME < /root/backup/vps_name.var
 else
 	if [[ $t_mode == "interactive" ]]; then
 		read -p "Enter VM name, [ENTER] set to default: ${t_hostname}: " VM_NAME
 		if [ -z $VM_NAME ]; then
 			VM_NAME=$t_hostname
 		fi
-		echo $VM_NAME > ./vps_name.var
+		echo $VM_NAME > /root/backup/vps_name.var
 	else
 		VM_NAME=$t_hostname
 	fi
