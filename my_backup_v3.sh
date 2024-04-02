@@ -133,25 +133,31 @@ local exe_str="/root/backup/my_backup_launcher.sh"
 checkCrontab
 
 if [[ $cron_conf2 -eq 1 ]]; then
-	# cronMenu
-	# if [[ $delete_cron -eq 1 ]]; then
-		# delCron
-		# return
-	# elif [[ $reconfig_cron -eq 0 ]]; then
-		# return
-	# fi
-	return
+	if [[ $t_mode == "interactive" ]]; then
+		cronMenu
+		if [[ $delete_cron -eq 1 ]]; then
+			delCron
+			return
+		elif [[ $reconfig_cron -eq 0 ]]; then
+			return
+		fi
+	else
+		return
+	fi
 else
-	# read -p "Configure Crontab for WG repair? [Y/n]: " cron
-	# if [[ -z $cron ]]; then
-		# cron='Y'
-	# fi
+	if [[ $t_mode == "interactive" ]]; then
+		read -p "Configure Crontab for WG repair? [Y/n]: " cron
+		if [[ -z $cron ]]; then
+			cron='Y'
+		fi
 
-	# until [[ "$cron" =~ ^[yYnN]*$ ]]; do
-		# echo "$cron: invalid selection."
-		# read -p "Configure Crontab? [y/n]: " cron
-	# done
-	cron="Y"
+		until [[ "$cron" =~ ^[yYnN]*$ ]]; do
+			echo "$cron: invalid selection."
+			read -p "Configure Crontab? [y/n]: " cron
+		done
+	else
+		cron="Y"
+	fi
 fi
 
 if [[ $cron_conf -eq 1 ]]; then
@@ -220,6 +226,16 @@ if [[ ! -f ~/backup/my_backup_launcher.sh ]]; then
 	chmod +x ~/backup/my_backup_launcher.sh
 else
 	chmod +x ~/backup/my_backup_launcher.sh
+fi
+
+if [[ ! -f ~/backup/my_backup_v3.sh ]]; then
+	# if [[ ! -f my_backup_v3.sh ]]; then
+		# wget https://github.com/Paulus13/my_backup/raw/main/my_backup_v3.sh
+	# fi
+	cp my_backup_v3.sh ~/backup
+	chmod +x ~/backup/my_backup_v3.sh
+else
+	chmod +x ~/backup/my_backup_v3.sh
 fi
 }
 
