@@ -138,6 +138,8 @@ if [[ $cron_conf2 -eq 1 ]]; then
 		if [[ $delete_cron -eq 1 ]]; then
 			delCron
 			return
+		elif [[ $reconfig_cron -eq 1 ]]; then
+			cron='Y'
 		elif [[ $reconfig_cron -eq 0 ]]; then
 			return
 		fi
@@ -146,7 +148,7 @@ if [[ $cron_conf2 -eq 1 ]]; then
 	fi
 else
 	if [[ $t_mode == "interactive" ]]; then
-		read -p "Configure Crontab for WG repair? [Y/n]: " cron
+		read -p "Configure Crontab for Backup? [Y/n]: " cron
 		if [[ -z $cron ]]; then
 			cron='Y'
 		fi
