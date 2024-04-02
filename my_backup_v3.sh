@@ -28,7 +28,7 @@ t_hostname=$(hostname)
 if [ -f /root/backup/vps_name.var ]; then
 	read VM_NAME < /root/backup/vps_name.var
 else
-	if [[ $t_mode == "interactive" ]]; then
+	if [[ $t_mode == "interactive" || $t_mode == "nobackup" ]]; then
 		read -p "Enter VM name, [ENTER] set to default: ${t_hostname}: " VM_NAME
 		if [ -z $VM_NAME ]; then
 			VM_NAME=$t_hostname
@@ -133,7 +133,7 @@ local exe_str="/root/backup/my_backup_launcher.sh"
 checkCrontab
 
 if [[ $cron_conf2 -eq 1 ]]; then
-	if [[ $t_mode == "interactive" ]]; then
+	if [[ $t_mode == "interactive" || $t_mode == "nobackup" ]]; then
 		cronMenu
 		if [[ $delete_cron -eq 1 ]]; then
 			delCron
@@ -147,7 +147,7 @@ if [[ $cron_conf2 -eq 1 ]]; then
 		return
 	fi
 else
-	if [[ $t_mode == "interactive" ]]; then
+	if [[ $t_mode == "interactive" || $t_mode == "nobackup" ]]; then
 		read -p "Configure Crontab for Backup? [Y/n]: " cron
 		if [[ -z $cron ]]; then
 			cron='Y'
@@ -169,10 +169,10 @@ fi
 if [[ "$cron" =~ ^[yY]$ ]]; then
 	checkPrepare
 	
-	simpleRND2 0 6
-	t_week_day=$my_rnd
+	# simpleRND2 0 6
+	t_week_day="0"
 	
-	simpleRND2 0 23
+	simpleRND2 22 23
 	t_hour=$my_rnd
 	
 	simpleRND2 0 59
@@ -274,6 +274,7 @@ function cronMenu() {
 # edit this variable, enter understandable VM name
 # VM_NAME=$(hostname)
 
+if [[ $t_mode != "nobackup" ]]; then
 getVMName
 
 mydate=$(date '+%Y-%m-%d_%H-%M-%S')
@@ -546,3 +547,4 @@ configCrontab2
 #cp /backup/$myfile1 /home/bu/backup/boodet/
 #scp_rc=$?
 #echo $mydate  TAR_RC=$tar_rc  SCP_RC=$scp_rc >> /backup/backup.log
+fi
