@@ -247,8 +247,8 @@ function cronMenu() {
 	# echo "Crontab menu"
 	echo 
 	echo "What do you want to do?"
-	echo "   1) Reconfigure crontab for WG repair"
-	echo "   2) Delete crontab configuration for WG repair"
+	echo "   1) Reconfigure crontab for Backup"
+	echo "   2) Delete crontab configuration for Backup"
 	echo "   3) Do Nothing"
 	# until [[ -z $MENU_OPTION || $MENU_OPTION =~ ^[1-3]$ ]]; do
 	until [[ $MENU_OPTION =~ ^[1-3]$ ]]; do
