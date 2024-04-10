@@ -179,7 +179,7 @@ if [[ "$cron" =~ ^[yY]$ ]]; then
 	t_minute=$my_rnd
 	
 	cron_time_str="${t_minute} ${t_hour} * * ${t_week_day}"
-	echo "${cron_time_str}  ${exe_str}" >> mycron
+	echo "${cron_time_str} ${exe_str}" >> mycron
 	crontab mycron
 	rm mycron 
 	
