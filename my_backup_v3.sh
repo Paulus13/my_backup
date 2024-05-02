@@ -25,6 +25,7 @@ function simpleRND2 {
 
 function getVMName {
 t_hostname=$(hostname)
+mkdir -p /root/backup
 if [ -f /root/backup/vps_name.var ]; then
 	read VM_NAME < /root/backup/vps_name.var
 else
