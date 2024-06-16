@@ -449,12 +449,12 @@ else
 fi
 
 # check SWGP
-if [ -f /lib/systemd/system/swgp-go.service ]; then
+if [ -f /lib/systemd/system/swgp-go*.service ]; then
 	swgp2=1
 	echo "SWGP used"  >> ~/backup.log
 	swgp_path1="/etc/swgp-go/"
 	swgp_path2="/usr/bin/swgp-go"
-	swgp_path3="/lib/systemd/system/swgp-go.service"
+	swgp_path3="/lib/systemd/system/swgp-go*.service"
 	swgp_path="${swgp_path1} ${swgp_path2} ${swgp_path3}"
 else
 	swgp2=0
