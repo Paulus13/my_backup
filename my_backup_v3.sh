@@ -279,6 +279,7 @@ function cronMenu() {
 
 if [[ $t_mode != "nobackup" ]]; then
 getVMName
+rm ~/backup_*.log
 
 mydate=$(date '+%Y-%m-%d_%H-%M-%S')
 myfile1="${VM_NAME}_${mydate}".tar.gz
