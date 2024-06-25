@@ -89,6 +89,15 @@ else
 fi
 }
 
+function runMeAt {
+min_to_del=1
+at now +${min_to_del} minutes <<END
+$script_launcher_full_path_local
+END
+
+write_log "Script $script_launcher_name_local will be run after ${min_to_del} minute"
+}
+
 
 mountNFSBackup
 
@@ -124,10 +133,11 @@ if [[ $mount_success -eq 1 ]]; then
 	share_script_launcher_change_time=$(stat -c %Y $script_launcher_full_path_share)
 	local_script_launcher_change_time=$(stat -c %Y $script_launcher_full_path_local)
 		
-	if [[ $share_script_launcher_change_time -gt $local_script_launcher_change_time ]]; then
-		cp $script_launcher_full_path_share $script_launcher_full_path_local
-		write_log "Script $script_launcher_name_local updated from share script folder"
-	fi		
+	# if [[ $share_script_launcher_change_time -gt $local_script_launcher_change_time ]]; then
+		# cp $script_launcher_full_path_share $script_launcher_full_path_local
+		# write_log "Script $script_launcher_name_local updated from share script folder"	
+		# runMeAt
+	# fi
 fi
 
 write_log "Backup launched"
