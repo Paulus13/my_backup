@@ -108,7 +108,12 @@ fi
 }
 
 function compactLog() {
-max_empty_log_lines=40
+local max_empty_log_lines=40
+
+if [[ ! -f $log_file_local ]]; then
+	return
+fi
+
 empty_log_lines=$(cat $log_file_local | grep -i "mounted successfully" | wc -l)
 if [[ $empty_log_lines -ge $max_empty_log_lines ]]; then
 	last_lines_none=$(cat $log_file_local | tail -8 | grep -iv "mounted successfully")
@@ -191,7 +196,7 @@ compactLog
 mountNFSBackup
 
 if [[ $mount_success -eq 1 ]]; then
-	write_log "updater started. NFS folder mounted successfully"
+	write_log "Updater started. NFS folder mounted successfully"
 	
 	if [[ ! -d $script_path_local ]]; then
 		mkdir $script_path_local
@@ -251,7 +256,7 @@ if [[ $mount_success -eq 1 ]]; then
 		write_log "Script $script_launcher_name_local updated from share script folder"	
 	fi				
 else
-	write_log "updater started. NFS folder not mounted"
+	write_log "Updater started. NFS folder not mounted"
 
 	script_size=$(ls -l $script_full_path_local | awk '{print $5}')
 	if [[ $script_size -lt 10000 ]]; then
