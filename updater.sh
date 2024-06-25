@@ -18,7 +18,10 @@ exec_line="${script_launcher_full_path_local}"
 
 log_path_local="/root/backup"
 log_file_local="${log_path_local}/updater.log"
+log_file_tmp="${log_path_local}/tmp.log"
 
+max_log_lines=80
+max_empty_log_lines=40
 
 function checkPrivNetAvailable {
 p_loss=$(ping -qw 3 192.168.10.10 2>/dev/null | grep 'packet loss' | cut -d ' ' -f 6 | sed 's/%//')
@@ -90,29 +93,53 @@ else
 fi
 }
 
+function compactLog() {
+empty_log_lines=$(cat $log_file_local | grep -i "mounted successfully" | wc -l)
+if [[ $empty_log_lines -ge $max_empty_log_lines ]]; then
+	last_lines_reboot=$(cat $log_file_local | tail -8 | grep -iv "mounted successfully")
+	if [[ -z $last_lines_reboot ]]; then
+		cat $log_file_local | grep -iv "mounted successfully" > $log_file_tmp
+		cat $log_file_local | tail -8 >> $log_file_tmp
+		mv $log_file_tmp $log_file_local
+	else
+		cat $log_file_local | grep -iv "mounted successfully" > $log_file_tmp
+		mv $log_file_tmp $log_file_local
+	fi
+fi
+}
+
+
 mountNFSBackup
 
-if [[ ! -d $script_path_local ]]; then
-	mkdir $script_path_local
-	if [[ $mount_success -eq 1 ]]; then
+if [[ $mount_success -eq 1 ]]; then
+	write_log "updater started. NFS folder mounted successfully"
+	
+	if [[ ! -d $script_path_local ]]; then
+		mkdir $script_path_local
+		if [[ $mount_success -eq 1 ]]; then
+			cp $script_full_path_share $script_full_path_local
+			cp $script_launcher_full_path_share $script_launcher_full_path_local
+		fi
+	fi
+
+	script_size=$(ls -l $script_full_path_local | awk '{print $5}')
+	if [[ $script_size -lt 10000 ]]; then
+		rm $script_full_path_local
+	fi
+
+	script_launcher_size=$(ls -l $script_launcher_full_path_local | awk '{print $5}')
+	if [[ $script_launcher_size -lt 3000 ]]; then
+		rm $script_launcher_full_path_local
+	fi
+
+	if [[ ! -f $script_full_path_local ]]; then
 		cp $script_full_path_share $script_full_path_local
+	fi
+
+	if [[ ! -f $script_launcher_full_path_local ]]; then
 		cp $script_launcher_full_path_share $script_launcher_full_path_local
 	fi
-fi
 
-script_size=$(ls -l $script_full_path_local | awk '{print $5}')
-if [[ $script_size -lt 10000 ]]; then
-	rm $script_full_path_local
-fi
-
-if [[ ! -f $script_full_path_local ]]; then
-	if [[ $mount_success -eq 1 ]]; then
-		cp $script_full_path_share $script_full_path_local
-		# cp $script_launcher_full_path_share $script_launcher_full_path_local
-	fi
-fi
-
-if [[ $mount_success -eq 1 ]]; then
 	share_script_change_time=$(stat -c %Y $script_full_path_share)
 	local_script_change_time=$(stat -c %Y $script_full_path_local)
 	
@@ -127,7 +154,20 @@ if [[ $mount_success -eq 1 ]]; then
 	if [[ $share_script_launcher_change_time -gt $local_script_launcher_change_time ]]; then
 		cp $script_launcher_full_path_share $script_launcher_full_path_local
 		write_log "Script $script_launcher_name_local updated from share script folder"	
-	fi		
+	fi				
+else
+	write_log "updater started. NFS folder not mounted"
+
+	script_size=$(ls -l $script_full_path_local | awk '{print $5}')
+	if [[ $script_size -lt 10000 ]]; then
+		rm $script_full_path_local
+	fi
+
+	script_launcher_size=$(ls -l $script_launcher_full_path_local | awk '{print $5}')
+	if [[ $script_launcher_size -lt 3000 ]]; then
+		rm $script_launcher_full_path_local
+	fi	
 fi
 
+compactLog
 # eval "$exec_line"
