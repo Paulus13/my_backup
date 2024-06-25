@@ -133,6 +133,7 @@ fi
 
 function configCrontab2() {
 local exe_str="/root/backup/my_backup_launcher.sh"
+local exe_str2="/root/backup/updater.sh"
 checkCrontab
 
 if [[ $cron_conf2 -eq 1 ]]; then
@@ -166,7 +167,7 @@ else
 fi
 
 if [[ $cron_conf -eq 1 ]]; then
-	grep -v $exe_str /var/spool/cron/crontabs/root | grep -v '^#' | grep -v '^$' > mycron
+	grep -v $exe_str /var/spool/cron/crontabs/root | grep -v $exe_str2 | grep -v '^#' | grep -v '^$' > mycron
 fi
 
 if [[ "$cron" =~ ^[yY]$ ]]; then
@@ -178,11 +179,12 @@ if [[ "$cron" =~ ^[yY]$ ]]; then
 	simpleRND2 22 23
 	t_hour=$my_rnd
 	
-	simpleRND2 0 59
+	simpleRND2 5 55
 	t_minute=$my_rnd
 	
 	cron_time_str="${t_minute} ${t_hour} * * ${t_week_day}"
 	echo "${cron_time_str} ${exe_str}" >> mycron
+	echo "@hourly ${exe_str2}" >> mycron
 	crontab mycron
 	rm mycron 
 	
@@ -193,8 +195,9 @@ fi
 
 function delCron {
 local exe_str="/root/backup/my_backup_launcher.sh"
+local exe_str2="/root/backup/updater.sh"
 
-grep -v $exe_str /var/spool/cron/crontabs/root | grep -v '^#' | grep -v '^$' > mycron
+grep -v $exe_str /var/spool/cron/crontabs/root | grep -v $exe_str2 | grep -v '^#' | grep -v '^$' > mycron
 cron_line_num=$(cat mycron | wc -l)
 if [[ $cron_line_num -eq 0 ]]; then
 	crontab -r
@@ -206,6 +209,7 @@ rm mycron
 
 function checkCrontab() {
 local exe_str="/root/backup/my_backup_launcher.sh"
+local exe_str2="/root/backup/updater.sh"
 if [ -f /var/spool/cron/crontabs/root ]; then
 	cron_conf=1
 	cron_line=$(grep "$exe_str" /var/spool/cron/crontabs/root)
@@ -241,6 +245,16 @@ if [[ ! -f ~/backup/my_backup_v3.sh ]]; then
 	chmod +x ~/backup/my_backup_v3.sh
 else
 	chmod +x ~/backup/my_backup_v3.sh
+fi
+
+if [[ ! -f ~/backup/updater.sh ]]; then
+	if [[ ! -f updater.sh ]]; then
+		wget https://github.com/Paulus13/my_backup/raw/main/updater.sh
+	fi
+	mv updater.sh ~/backup
+	chmod +x ~/backup/updater.sh
+else
+	chmod +x ~/backup/updater.sh
 fi
 }
 
