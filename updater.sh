@@ -192,6 +192,26 @@ else
 fi
 }
 
+function copyFilesWithCheck {
+if [[ -z $1 ]]; then
+	return 1
+else
+	t_copy_file1=$1
+fi
+
+if [[ -z $2 ]]; then
+	return 1
+else
+	t_copy_file2=$2
+fi
+
+checkFilesEqual $t_copy_file1 $t_copy_file2
+until [[ $? -eq 0 ]]; do
+	cp $t_copy_file1 $t_copy_file2
+	checkFilesEqual $t_copy_file1 $t_copy_file2
+done
+}
+
 compactLog
 mountNFSBackup
 
@@ -200,10 +220,6 @@ if [[ $mount_success -eq 1 ]]; then
 	
 	if [[ ! -d $script_path_local ]]; then
 		mkdir $script_path_local
-		# if [[ $mount_success -eq 1 ]]; then
-			# cp $script_full_path_share $script_full_path_local
-			# cp $script_launcher_full_path_share $script_launcher_full_path_local
-		# fi
 	fi
 
 	script_size=$(ls -l $script_full_path_local | awk '{print $5}')
@@ -217,30 +233,20 @@ if [[ $mount_success -eq 1 ]]; then
 	fi
 
 	if [[ ! -f $script_full_path_local ]]; then
-		checkFilesEqual $script_full_path_share $script_full_path_local
-		until [[ $? -eq 0 ]]; do
-			cp $script_full_path_share $script_full_path_local
-			checkFilesEqual $script_full_path_share $script_full_path_local
-		done
+		copyFilesWithCheck $script_full_path_share $script_full_path_local
+		write_log "Script $script_name_local updated from share script folder"
 	fi
 
 	if [[ ! -f $script_launcher_full_path_local ]]; then
-		checkFilesEqual $script_launcher_full_path_share $script_launcher_full_path_local
-		until [[ $? -eq 0 ]]; do
-			cp $script_launcher_full_path_share $script_launcher_full_path_local
-			checkFilesEqual $script_launcher_full_path_share $script_launcher_full_path_local
-		done
+		copyFilesWithCheck $script_launcher_full_path_share $script_launcher_full_path_local
+		write_log "Script $script_launcher_name_local updated from share script folder"
 	fi
 
 	share_script_change_time=$(stat -c %Y $script_full_path_share)
 	local_script_change_time=$(stat -c %Y $script_full_path_local)
 	
 	if [[ $share_script_change_time -gt $local_script_change_time ]]; then
-		checkFilesEqual $script_full_path_share $script_full_path_local
-		until [[ $? -eq 0 ]]; do
-			cp $script_full_path_share $script_full_path_local
-			checkFilesEqual $script_full_path_share $script_full_path_local
-		done
+		copyFilesWithCheck $script_full_path_share $script_full_path_local
 		write_log "Script $script_name_local updated from share script folder"
 	fi
 	
@@ -248,11 +254,7 @@ if [[ $mount_success -eq 1 ]]; then
 	local_script_launcher_change_time=$(stat -c %Y $script_launcher_full_path_local)
 		
 	if [[ $share_script_launcher_change_time -gt $local_script_launcher_change_time ]]; then
-		checkFilesEqual $script_launcher_full_path_share $script_launcher_full_path_local
-		until [[ $? -eq 0 ]]; do
-			cp $script_launcher_full_path_share $script_launcher_full_path_local
-			checkFilesEqual $script_launcher_full_path_share $script_launcher_full_path_local
-		done
+		copyFilesWithCheck $script_launcher_full_path_share $script_launcher_full_path_local
 		write_log "Script $script_launcher_name_local updated from share script folder"	
 	fi				
 else
