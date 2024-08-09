@@ -521,7 +521,7 @@ if [[ ! -z $t_home_line ]]; then
 fi
 
 #common_path="/etc/ssh/sshd_config /home/"
-common_path="/etc/ssh/sshd_config /etc/sysctl.conf"
+common_path="/etc/ssh/sshd_config /etc/sysctl.conf /etc/fstab"
 
 bu_path="${se_path} ${ovpn_path} ${swan_path} ${wg_path} ${f2b_path} ${iptp_path} ${ofw_path} ${bind_path} ${unb_path} ${cron_path} ${swgp_path} ${dproxy_path} ${common_path} ${home_path}"
 
